@@ -103,13 +103,95 @@ gavote$cperAA <- gavote$perAA - mean(gavote$perAA)
 lmod2 <- lm(undercount ~ cperAA + cpergore * rural + equip, gavote)
 summary(lmod2)
 
-# INTERPRETATION WITH BASELINE
-# With all other predictors held constant...
+# INTERPRETING PRACTICE
+
+# ESTABLISHING THE BASELINE
+
+# Consider a rural county which has an average proportion of Gore voters and an average
+# proportion of African Americans where lever machines are used for voting. Because rural
+# and lever are the reference levels for the two qualitative variables, there is no contribution
+# to the predicted undercount from these terms. Furthermore, because we have centered the
+# two quantitative variables at their mean values, these terms also do not enter into the
+# prediction. Notice the worth of the centering because otherwise we would need to set
+# these variables to zero to get them to drop out of the prediction equation; zero is not a
+# typical value for these predictors. Given that all the other terms are dropped, the predicted
+# undercount is just given by the intercept, which is 4.33%
+
+# Baselines: 
+# Rural
+# Lever
+# average proportion of Gore voters 
+# average proportion of African Americans
 
 # COMPARED instead BECAUSE
+
 # Given two counties with the same values of the predictors, except having different voting
 # equipment, we would predict the undercount to be 1.56% higher for the OS-PC county
 # compared to the lever county. However, we would not go so far as to say that if we went
 # to a county with lever equipment and changed it to OS-PC that this would cause the
 # undercount to increase by 1.56%.
 
+#                         Estimate  Std. Error    t value     Pr(>|t|)
+# equipOS-PC           0.015639603 0.005827389  2.6838095 8.096872e-03
+
+# Practicing:
+# With all other predictions unchanged, the undercount would be 1.56% higher for
+# the OS-PC county compared to the lever county. 
+
+# RESCALING OF INTERPRETATION
+
+# With all other predictors held constant, we would predict the undercount to increase
+# by 2.83% going from a county with no African Americans to all African American.
+
+#                         Estimate  Std. Error    t value     Pr(>|t|)
+# cperAA               0.028264080 0.031092148  0.9090424 3.647860e-01
+
+# Sometimes a one-unit change in a predictor is too large or too small, prompting a
+# rescaling of the interpretation. For example, we might predict a 0.283% increase in the
+# undercount for a 10% increase in the proportion of African Americans. Of course, this
+# interpretation should not be taken too literally. We already know that the proportion of
+# African Americans and Gore voters is strongly correlated so that an increase in the
+# proportion of one would lead to an increase in the proportion of the other. This is the
+# problem of collinearity which makes interpretation of regression coefficients more
+# difficult. Furthermore, the proportion of African Americans is likely to be associated with
+# other socioeconomic variables which might also be related to the undercount. This further
+# hinders the possibility of a causal conclusion.
+
+# INTERPRETING INTERACTION
+# The interpretation of the rural and pergore cannot be done separately as there is an
+# interaction term between these two variables. 
+# 
+# We see that for an average number of Gore voters, we would predict a 1.86%-lower undercount 
+# in an urban county compared to a rural county. 
+
+#                      Estimate Std. Error t value Pr(>|t|) 
+# ruralurban          -0.018637   0.004648  -4.009 9.56e-05 *** 
+
+# In a rural county, we predict a 0.08% increase in the undercount as the
+# proportion of Gore voters increases by 10%. 
+
+#                      Estimate Std. Error t value Pr(>|t|) 
+# cpergore             0.008237   0.051156   0.161   0.8723 
+ 
+# In an urban county, we predict a (0.00824–0.00880)*10=−0.0056% increase in the undercount as the proportion of Gore voters
+# increases by 10%. Since the increase is by a negative amount, this is actually a decrease.
+# This illustrates the potential pitfalls in interpreting the effect of a predictor in the presence
+# of an interaction. We cannot give a simple stand-alone interpretation of the effect of the
+# proportion of Gore voters. The effect is to increase the undercount in rural counties and to
+# decrease it, if only very slightly, in urban counties.
+
+# Hypothesis testing
+# Compare 2 linear models
+anova(lmod1, lmod2)
+# p-value indicates the null hypothesis of preferring the smaller model should be rejected
+
+# Test specifc predictors
+summary(lmod2)$coef
+
+# Test qualitative predictors with >levels
+drop1(lmod2, test="F")
+# equipment is barely statistically significant in that the p-value is just less
+# than the traditional 5% significance level.
+
+# Confidence intervals
+confint(lmod2)
