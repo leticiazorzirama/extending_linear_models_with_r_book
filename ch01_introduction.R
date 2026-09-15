@@ -195,3 +195,65 @@ drop1(lmod2, test="F")
 
 # Confidence intervals
 confint(lmod2)
+
+# Confidence intervals have a duality with the corresponding t-tests in that if the p-value 
+# is greater than 5%, zero will fall in the interval and vice versa. 
+# Confidence intervals give a range of plausible values for the parameter and are more useful 
+# for judging the size of the effect of the predictor than a p-value which merely indicates 
+# statistical significance, not necessarily practical significance.
+
+# Diagnosticos
+plot(lmod2)
+
+# Additional source:
+# https://library.virginia.edu/data/articles/diagnostic-plots
+
+# Residuals vs. Fitted
+# This plot shows if residuals have non-linear patterns. 
+# There could be a non-linear relationship between predictor variables and an outcome variable, 
+# and the pattern could show up in this plot if the model doesn’t capture the non-linear relationship. 
+# If you find equally spread residuals around a horizontal line without distinct patterns, 
+# that is a good indication you don’t have non-linear relationships.
+
+# Scale-Location
+# It's also called a Spread-Location plot. This plot shows if residuals are spread equally along 
+# the ranges of predictors. This is how you can check the assumption of equal variance (homoscedasticity). 
+# It's good if you see a horizontal line with equally (randomly) spread points.
+
+# Normal Q-Q plot
+# Compared residuals to ideal normal observations
+
+# This plot shows if residuals are normally distributed. 
+# Do residuals follow a straight line well or do they deviate severely? 
+# It’s good if residuals align with the straight dashed line.
+
+# Residuals vs. Leverage
+# This plot helps us to find influential cases (i.e., subjects) if there are any. 
+# Not all outliers are influential in linear regression analysis (whatever outliers mean). 
+# Even though data have extreme values, they might not be influential to determine a regression line. 
+# That means the results wouldn’t be much different if we either include or exclude them from analysis. 
+# They follow the trend in the majority of cases and they don’t really matter; they are not influential. 
+# On the other hand, some cases could be very influential even if they look to be within a reasonable range of the values. 
+# They could be extreme cases against a regression line and can alter the results if we exclude them from analysis. 
+# Another way to put it is that they don’t get along with the trend in the majority of the cases.
+
+# Check two influencial cases
+gavote[cooks.distance(lmod2) > 0.1,]
+
+# It is useful to examine the leverages to determine which cases have 
+# the power to be influential. 
+# Points on the boundary of the predictor space will have the most leverage.
+
+# Looking for outliers
+halfnorm(influence(lmod2)$hat)
+# Raise points with much higher leverage
+gavote[influence(lmod2)$hat > 0.3,]
+# These counties were not identified as influential—having high leverage 
+# alone is not necessarily enough to be influential.
+
+# In this case, we see a linear relationship indicating that it is not 
+# worthwhile seeking transformations. Furthermore, there is no sign that a 
+# few points are having undue influence on the relationship.
+termplot(lmod2, partial=TRUE, terms=1)
+
+# Robust regression
